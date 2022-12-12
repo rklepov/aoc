@@ -8,7 +8,8 @@ inp:read0`:./input/05.txt;
 lineSep:first where 0=count each inp;
 lineNum:lineSep-1;
 
-n:sum not null"J"$" "vs inp lineNum;
+split:{r:x group s:sums differ w:x>" ";r distinct s where w};
+n:count"J"$split inp lineNum;
 
 stacks:trim flip(inp til lineNum)@\:where@[((n-1)+n*3)#0b;1+4*til n;:;1b];
 
