@@ -5,19 +5,14 @@
 inp:read0`:./input/08.txt;
 -1"";
 
-frame:{[v;g]
-  f:type[g 0]$v;
-  g:f,/:g,\:f;
-  F:enlist count[g 0]#f;
-  F,g,F
- };
+deltas1:{(-1+first x)-':x};
 
-left:(0<deltas maxs@)';
+left:(0<deltas1 maxs@)';
 right:(reverse')left(reverse')@;
 top:flip left flip@;
 bottom:flip right flip@;
 
-grid:frame[-1]"I"$/:/:inp;
+grid:"I"$/:/:inp;
 
 // part 1
 r:sum raze(or/)(left;right;top;bottom)@\:grid;
