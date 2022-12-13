@@ -5,26 +5,24 @@
 inp:read0`:./input/08.txt;
 -1"";
 
-deltas1:{(-1+first x)-':x};
-
-left:(0<deltas1 maxs@)';
-right:(reverse')left(reverse')@;
-top:flip left flip@;
-bottom:flip right flip@;
+left:(');
+right:{(reverse x reverse@)'};
+top:{flip left[x]flip@};
+bottom:{flip right[x]flip@};
 
 grid:"I"$/:/:inp;
 
 // part 1
-r:sum raze(or/)(left;right;top;bottom)@\:grid;
+deltas1:{[n;v](n+first v)-':v};
+look:0<deltas1[-1]maxs@;
+
+r:sum raze(or/)@\:[(left;right;top;bottom);look]@\:grid;
 show"j"$r; / 1681
 
 // part 2
-west:{({y-x}.-2#0,where@)each 0>=x-(,\)x}';
-east:(reverse')west(reverse')@;
-north:flip west flip@;
-south:flip east flip@;
+look:{({y-x}.-2#0,where@)each 0>=x-(,\)x};
 
-r:(max/)(*/)(west;east;north;south)@\:grid;
+r:(max/)(*/)@\:[(left;right;top;bottom);look]@\:grid;
 show r; / 201684
 
 exit 0;
