@@ -16,11 +16,16 @@ grid:"I"$/:/:inp;
 
 // part 1
 r:sum raze(or/)(left;right;top;bottom)@\:grid;
-show r; / 1681
+show"j"$r; / 1681
 
 // part 2
+west:{({y-x}.-2#0,where@)each 0>=x-(,\)x}';
+east:(reverse')west(reverse')@;
+north:flip west flip@;
+south:flip east flip@;
 
-
+r:(max/)(*/)(west;east;north;south)@\:grid;
+show r; / 201684
 
 exit 0;
 
