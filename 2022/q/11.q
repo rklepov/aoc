@@ -42,13 +42,16 @@ buildProfile:{[profile;card]
 
 profile:buildProfile/[();split[""~/:;inp]];
 
-run:{[monkey;reduce;round]
+monkey:`monkey xcol 1!delete items from profile;
+init:select r:0,t:0,monkey:id,level:items from ungroup`id`items#profile;
+
+observe:{[monkey;reduce;round]
   round:select from round where r=max r;
   round:raze{[monkey;reduce;turn]
     turn:turn lj monkey;
     turn:update level:{[op;a1;a2;lvl]op[a1 lvl;a2 lvl]}'[op;arg1;arg2;level]from turn where monkey=t;
     turn:update reduce level from turn where monkey=t;
-    turn:(select from turn where r=max r,monkey<>t),select from turn where monkey=t;
+    turn:(select from turn where monkey<>t),select from turn where monkey=t;
     turn:update monkey:?["b"$0=level mod test;true;false]from turn where monkey=t;
     select r,t+1,monkey,level from turn
   }[monkey;reduce]\[count monkey;round];
@@ -57,15 +60,24 @@ run:{[monkey;reduce;round]
   round
  };
 
-round:select r:0,t:0,monkey:id,level:items from ungroup`id`items#profile;
-monkey:`monkey xcol 1!delete items from profile;
+run:{[monkey;reduce;rounds;init]
+  raze observe[monkey;reduce]\[rounds;init]
+ };
 
-history:raze run[monkey;div[;3]]\[20;round];
+monkeyBusiness:{[hist]
+  stats:select inspect:count i by monkey from hist where r<>max r,monkey=t;
+  exec prd inspect from stats where 1>=rank neg inspect
+ };
 
-stats:select inspect:count i by monkey from history where r<>max r,monkey=t;
-
-level:exec prd inspect from stats where 1>=rank neg inspect;
+// part 1
+history:run[monkey;div[;3];20;init];
+level:monkeyBusiness history;
 show level; / 57838
+
+// part 2
+history:run[monkey;mod[;prd exec test from monkey];10000;init];
+level:monkeyBusiness history;
+show level; / 15050382231
 
 exit 0;
 
