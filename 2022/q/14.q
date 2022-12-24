@@ -47,16 +47,16 @@ caveMap:buildMap[(0;500);rockShape];
 / D?caveMap`cave
 
 fall:{
-  shift:(::;prev;next);
-  / ugly while loop with counter and break
-  r:{[n;v;iv](iv[0]<n)and v~iv 1}[count shift;y]{[shift;u;iv]
-    i:iv 0;
-    v:D["."]^shift[i]iv 1;
-    w:@[v;where[D["."]=v]inter where D["+"]=u;1+];
-    unshift:shift(cs-i)mod cs:count shift;
-    (i+1;iv[1]^unshift w)
-  }[shift;x]/(0;y);
-  r 1
+  / Trying all 3 options and taking the first one with a change is probably not
+  / optimal. But the alternatives are ugly (like a while loop with a counter).
+  r:first r where 1_differ enlist[y],
+    r:y^/:(::;next;prev)@'
+      {@[y;where[D["."]=y]inter where D["+"]=x;1+]}[x]each
+    D["."]^(::;prev;next)@\:y;
+  / Actually no need to return the unchanged row, but it's useful to trace and
+  / display the path of a grain of sand.
+  if[0=count r;r:y];
+  r
  };
 
 // part 1
