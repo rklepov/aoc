@@ -42,17 +42,14 @@ tp:{[cave;open]
  };
 
 / The rather straightforward "dynamic programming" algorithm with the recursive
-/ graph traversal. While the logic tries to avoid the exhaustive search and cut
-/ some branches i.e. skip the paths which won't improve the total score, but
-/ overall it's still very slow for a high dimensional input. For example
-/ although on the test input with 10 rooms it takes several seconds to find the
-/ maximum released pressure but on the main task input with 60 rooms it took
-/ about 33hr to complete on my laptop.
+/ graph traversal. The logic tries to skip the paths that won't improve total
+/ score by memoizing the score in the node on the particular step (minute) and
+/ with a particular set of open valves. While this considerably reduces the
+/ search space but overall the algorithm is still very slow for a high
+/ dimensional input. For example although on the test input with 10 rooms it
+/ takes several seconds to find the maximum released pressure but on the main
+/ task input with 60 rooms it took about 33hr to complete on my laptop.
 traverse:{[cave;T;left;vmop;open;vid]
-  / if[0= count[.Q.v vmop]mod 10000;
-  /   -1(string[`second$.z.T]," ",string count .Q.v vmop);
-  / ];
-
   m:left-1;
   if[0=m;
     :@[vmop;(vid;left;open);:;tp[cave;open]];
@@ -73,18 +70,13 @@ traverse:{[cave;T;left;vmop;open;vid]
     :@[vmop;(vid;left;open);:;m*tp[cave;open]];
   ];
 
-  p:vmop[([]v;m;o)]`p;
-  w:where null p;
+  w:where null vmop[([]v;m;o)]`p;
   vmop:.z.s[cave;T;m]/[vmop;o w;v w];
   vmop:@[vmop;(vid;left;open);:;max[vmop[([]v;m;o)]`p]+tp[cave;open]];
   vmop
  };
 
 T:30;
-
-/// considering the valves with zero flow rate "open"
-/// open:asc exec v from cave where 0=fr;
-/// vmop:3!select v,m:T,o:count[cave]#enlist open,p:0 from cave;
 
 open:`s#"j"$();
 // [v]alve, [m]inute, [o]pen valves, [p]ressure released
@@ -95,6 +87,6 @@ vmop:.Q.v traverse[cave;T;T;`vmop;open;conv26"AA"];
 show count vmop; // 693711
 show first vmop; // 1850
 
-exit 0
+exit 0;
 
 // __EOF__
